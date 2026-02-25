@@ -8,103 +8,136 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
 <style>
-body {
-    margin: 0;
-    font-family: Arial;
-    background: #f4f6f9;
+body{
+    margin:0;
+    font-family:Arial, sans-serif;
+    background:#f4f6f9;
 }
 
-.navbar {
-    background: #046393;
-    padding: 15px;
-    display: flex;
-    justify-content: space-between;
-    color: white;
+/* NAVBAR */
+.navbar{
+    background:#046393;
+    padding:15px 30px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    color:white;
 }
 
-.logo {
-    width: 50px;
-}
-    
-.nav-links span {
-    margin-right: 20px;
-    cursor: pointer;
-    font-weight: bold;
+.nav-left{
+    display:flex;
+    align-items:center;
+    gap:15px;
 }
 
-.nav-links span:hover {
-    text-decoration: underline;
+.nav-left img{
+    height:45px;
 }
 
-.container {
-    max-width: 1100px;
-    margin: 40px auto;
-    background: white;
-    padding: 30px;
-    border-radius: 8px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+.nav-links span{
+    margin-left:25px;
+    cursor:pointer;
+    font-weight:bold;
 }
 
-input {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 12px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
+.nav-links span:hover{
+    text-decoration:underline;
 }
 
-button {
-    padding: 10px 15px;
-    background: #046393;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
+/* CONTAINER */
+.container{
+    max-width:1200px;
+    margin:40px auto;
+    background:white;
+    padding:30px;
+    border-radius:10px;
+    box-shadow:0 8px 25px rgba(0,0,0,0.08);
 }
 
-button:hover {
-    background: #03527a;
+h2{
+    margin-bottom:20px;
+    color:#046393;
 }
 
-.status-box {
-    padding: 15px;
-    border-radius: 6px;
-    margin-bottom: 15px;
-    font-weight: bold;
+input{
+    width:100%;
+    padding:10px;
+    margin-bottom:12px;
+    border-radius:6px;
+    border:1px solid #ccc;
 }
 
-.green { background: #d4edda; color: #155724; }
-.yellow { background: #fff3cd; color: #856404; }
-.red { background: #f8d7da; color: #721c24; }
-
-table {
-    width: 100%;
-    border-collapse: collapse;
+button{
+    padding:10px 15px;
+    border:none;
+    border-radius:6px;
+    cursor:pointer;
+    font-weight:bold;
+    background:#046393;
+    color:white;
 }
 
-th, td {
-    border: 1px solid #ddd;
-    padding: 8px;
+button:hover{
+    opacity:0.9;
 }
 
-th {
-    background: #046393;
-    color: white;
+/* STATUS BOX */
+.status-box{
+    padding:15px;
+    border-radius:8px;
+    margin-bottom:15px;
+    font-weight:bold;
+    transition:0.3s;
+}
+
+.green{ background:#d4edda; color:#155724; }
+.yellow{ background:#fff3cd; color:#856404; }
+.red{ background:#f8d7da; color:#721c24; }
+
+/* TABELA */
+table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+th,td{
+    border:1px solid #ddd;
+    padding:8px;
+    text-align:center;
+}
+
+th{
+    background:#046393;
+    color:white;
+}
+
+td[contenteditable="true"]{
+    background:#f9f9f9;
+}
+
+.btn-red{
+    background:#c0392b;
+}
+
+.btn-green{
+    background:#27ae60;
 }
 </style>
 </head>
-
 <body>
 
 <div class="navbar">
-    <div><strong>Santa Rosa Malhas</strong></div>
-    <img src="assets/logo.png" alt="logo">
+    <div class="nav-left">
+        <img src="assets/logo.png">
+        <strong>Santa Rosa Malhas</strong>
+    </div>
     <div class="nav-links">
         <span onclick="mostrarNovo()">Novo Remanejo</span>
         <span onclick="mostrarLista()">Remanejos Cadastrados</span>
     </div>
 </div>
 
+<!-- NOVO REMANEJO -->
 <div class="container" id="novo">
     <h2>Novo Remanejo</h2>
 
@@ -119,11 +152,17 @@ th {
     <button onclick="salvar()">Salvar</button>
 </div>
 
+<!-- LISTA -->
 <div class="container" id="lista" style="display:none;">
     <h2>Remanejos Cadastrados</h2>
+
+    <button class="btn-green" onclick="gerarPDFSelecionados()">Gerar PDF Selecionados</button>
+    <br><br>
+
     <table id="tabela">
         <thead>
             <tr>
+                <th>✓</th>
                 <th>Cliente</th>
                 <th>Filial</th>
                 <th>NF</th>
@@ -139,112 +178,185 @@ th {
 </div>
 
 <script>
-const URL = "https://script.google.com/macros/s/AKfycbxwQRdSabKyRrfcUhBhinqssi7A4qrNgU1C2wL7Zu06w2CUNhhH6MgkSQNC4pOozYRf/exec";
 
+const URL = "https://script.google.com/macros/s/AKfycbyaaGZBEB7gsiFrQIS4LewAVdbEwztqxclMEOCvFnULAPjL6JDmJZwYTrMXANTTpe4/exec";
+
+/* NAVEGAÇÃO */
 function mostrarNovo(){
-    document.getElementById("novo").style.display="block";
-    document.getElementById("lista").style.display="none";
+    novo.style.display="block";
+    lista.style.display="none";
 }
 
 function mostrarLista(){
-    document.getElementById("novo").style.display="none";
-    document.getElementById("lista").style.display="block";
+    novo.style.display="none";
+    lista.style.display="block";
     carregarDados();
 }
 
+/* VALIDAÇÃO INTELIGENTE */
 function verificarValor(){
-    let entrada = parseFloat(document.getElementById("entrada").value) || 0;
-    let saldo = parseFloat(document.getElementById("saldo").value) || 0;
-    let umPorCento = entrada * 0.01;
+    let entrada=parseFloat(entrada.value)||0;
+    let saldo=parseFloat(saldo.value)||0;
+    let umPorCento=entrada*0.01;
 
-    let box = document.getElementById("statusBox");
-    box.innerHTML = "1% da Entrada: R$ " + umPorCento.toFixed(2);
+    let box=document.getElementById("statusBox");
+    box.innerHTML="1% da Entrada: R$ "+umPorCento.toFixed(2);
 
-    if(saldo < umPorCento){
+    if(saldo<umPorCento){
         box.className="status-box green";
-        box.innerHTML += "<br>Saldo menor que 1% — Autorizado.";
-    } else if(saldo == umPorCento){
+        box.innerHTML+="<br>Saldo menor que 1% — Autorizado.";
+    }else if(saldo==umPorCento){
         box.className="status-box yellow";
-        box.innerHTML += "<br>Saldo igual a 1% — Confirmar ao salvar.";
-    } else {
+        box.innerHTML+="<br>Saldo igual a 1% — Confirmação necessária.";
+    }else{
         box.className="status-box red";
-        box.innerHTML += "<br>Saldo maior que 1% — Necessário autorização superior.";
+        box.innerHTML+="<br>Saldo maior que 1% — Exige autorização superior.";
     }
 }
 
+/* SALVAR NOVO */
 function salvar(){
-    let entrada = parseFloat(document.getElementById("entrada").value) || 0;
-    let saldo = parseFloat(document.getElementById("saldo").value) || 0;
-    let umPorCento = entrada * 0.01;
+    let entradaVal=parseFloat(entrada.value)||0;
+    let saldoVal=parseFloat(saldo.value)||0;
+    let umPorCento=entradaVal*0.01;
 
-    if(saldo > umPorCento){
-        alert("⚠️ Saldo maior que 1%! Necessário autorização do superior.");
+    if(saldoVal>umPorCento){
+        alert("⚠️ Saldo maior que 1%. Necessário autorização superior.");
         return;
     }
 
-    if(saldo == umPorCento){
-        if(!confirm("Saldo igual a 1%. Deseja realmente salvar?")){
-            return;
-        }
+    if(saldoVal==umPorCento){
+        if(!confirm("Saldo igual a 1%. Deseja realmente salvar?")) return;
     }
-
-    const dados = {
-        cliente: cliente.value,
-        filial: filial.value,
-        nf: nf.value,
-        entrada: entrada,
-        saldo: saldo
-    };
 
     fetch(URL,{
         method:"POST",
-        body: JSON.stringify(dados)
-    }).then(res=>res.json())
-    .then(()=>{
-        alert("Salvo com sucesso!");
-        location.reload();
-    });
+        body:JSON.stringify({
+            cliente:cliente.value,
+            filial:filial.value,
+            nf:nf.value,
+            entrada:entradaVal,
+            saldo:saldoVal
+        })
+    }).then(()=>location.reload());
 }
 
+/* CARREGAR DADOS */
 function carregarDados(){
     fetch(URL)
     .then(res=>res.json())
     .then(dados=>{
         let tbody=document.querySelector("#tabela tbody");
         tbody.innerHTML="";
+
         dados.forEach((linha,index)=>{
             tbody.innerHTML+=`
-                <tr>
-                    <td>${linha[0]}</td>
-                    <td>${linha[1]}</td>
-                    <td>${linha[2]}</td>
-                    <td>${linha[3]}</td>
-                    <td>${linha[4]}</td>
-                    <td>${linha[5]}</td>
-                    <td contenteditable="true">${linha[6] || ""}</td>
-                    <td>
-                        <button onclick="gerarPDF(${index})">PDF</button>
-                    </td>
-                </tr>
-            `;
+            <tr>
+                <td><input type="checkbox" class="selecionar" value="${index}"></td>
+                <td contenteditable="true">${linha[0]}</td>
+                <td contenteditable="true">${linha[1]}</td>
+                <td contenteditable="true">${linha[2]}</td>
+                <td contenteditable="true">${linha[3]}</td>
+                <td contenteditable="true">${linha[4]}</td>
+                <td>${linha[5]}</td>
+                <td contenteditable="true">${linha[6]||""}</td>
+                <td>
+                    <button onclick="salvarEdicao(this,${index})">Salvar</button>
+                    <button class="btn-red" onclick="excluir(${index})">Excluir</button>
+                </td>
+            </tr>`;
         });
     });
 }
 
-async function gerarPDF(index){
+/* EDITAR */
+function salvarEdicao(btn,index){
+    let linha=btn.parentElement.parentElement;
+    let c=linha.querySelectorAll("td");
+
+    let entradaVal=parseFloat(c[4].innerText);
+    let umPorCento=entradaVal*0.01;
+
+    fetch(URL,{
+        method:"PUT",
+        body:JSON.stringify({
+            index:index,
+            cliente:c[1].innerText,
+            filial:c[2].innerText,
+            nf:c[3].innerText,
+            entrada:entradaVal,
+            saldo:c[5].innerText,
+            umPorCento:umPorCento,
+            romaneio:c[7].innerText
+        })
+    }).then(()=>alert("Atualizado com sucesso!"));
+}
+
+/* EXCLUIR */
+function excluir(index){
+    if(!confirm("Deseja realmente excluir?")) return;
+
+    fetch(URL,{
+        method:"DELETE",
+        body:JSON.stringify({index:index})
+    }).then(()=>{
+        alert("Excluído com sucesso!");
+        carregarDados();
+    });
+}
+
+/* PDF PROFISSIONAL */
+async function gerarPDFSelecionados(){
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
 
-    doc.setFontSize(18);
-    doc.text("Santa Rosa Malhas", 20, 20);
+    let selecionados=document.querySelectorAll(".selecionar:checked");
+    if(selecionados.length==0){
+        alert("Selecione ao menos uma linha.");
+        return;
+    }
 
-    doc.setFontSize(12);
-    doc.text("Romaneio de Remanejo", 20, 30);
+    doc.addImage("assets/logo.png","PNG",15,10,40,20);
 
-    doc.text("Registro nº " + (index+1), 20, 45);
+    doc.setFontSize(20);
+    doc.text("Santa Rosa Malhas",70,20);
 
-    doc.save("romaneio.pdf");
+    doc.setFontSize(13);
+    doc.text("Relatório Oficial de Remanejo",70,30);
+
+    doc.setDrawColor(4,99,147);
+    doc.line(10,40,200,40);
+
+    let y=55;
+
+    selecionados.forEach(check=>{
+        let linha=check.parentElement.parentElement;
+        let c=linha.querySelectorAll("td");
+
+        doc.setFontSize(12);
+        doc.text("Cliente: "+c[1].innerText,15,y);
+        doc.text("Filial: "+c[2].innerText,110,y);
+        y+=8;
+
+        doc.text("NF: "+c[3].innerText,15,y);
+        doc.text("Entrada: "+c[4].innerText,70,y);
+        doc.text("Saldo: "+c[5].innerText,130,y);
+        y+=8;
+
+        doc.text("1%: "+c[6].innerText,15,y);
+        doc.text("Nº Romaneio: "+c[7].innerText,90,y);
+
+        y+=15;
+
+        if(y>270){
+            doc.addPage();
+            y=20;
+        }
+    });
+
+    doc.save("Relatorio_Remanejo_Santa_Rosa_Malhas.pdf");
 }
+
 </script>
 
 </body>
