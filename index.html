@@ -2,79 +2,186 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Santa Rosa Malhas - Remanejo</title>
+<title>Santa Rosa Malhas - Sistema de Remanejo</title>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
 <style>
-body{
-    font-family:Arial;
+
+/* ====== RESET ====== */
+*{
     margin:0;
-    background:#f4f6f9;
+    padding:0;
+    box-sizing:border-box;
 }
 
+body{
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background:#f1f5f9;
+    color:#1e293b;
+}
+
+/* ===== NAVBAR ===== */
 nav{
-    background:#111827;
-    color:white;
-    padding:15px 30px;
+    background:#0f172a;
+    padding:15px 40px;
     display:flex;
     align-items:center;
-    gap:20px;
+    justify-content:space-between;
+    box-shadow:0 4px 15px rgba(0,0,0,0.2);
+}
+
+.nav-left{
+    display:flex;
+    align-items:center;
+    gap:15px;
 }
 
 nav img{
-    height:40px;
+    height:45px;
 }
 
-nav button{
+nav h1{
+    font-size:20px;
+    font-weight:600;
+    color:white;
+}
+
+.nav-buttons button{
     background:none;
     border:none;
-    color:white;
-    font-size:16px;
+    color:#cbd5e1;
+    font-size:15px;
+    margin-left:25px;
     cursor:pointer;
+    transition:0.3s;
 }
 
+.nav-buttons button:hover{
+    color:white;
+}
+
+/* ===== CONTAINER ===== */
 .container{
-    padding:30px;
+    max-width:1300px;
+    margin:40px auto;
+    padding:20px;
+}
+
+/* ===== CARD ===== */
+.card{
+    background:white;
+    padding:35px;
+    border-radius:14px;
+    box-shadow:0 10px 25px rgba(0,0,0,0.08);
+    margin-bottom:30px;
+}
+
+/* ===== TITLES ===== */
+.card h2{
+    margin-bottom:25px;
+    font-size:22px;
+    font-weight:600;
+    color:#0f172a;
+}
+
+/* ===== FORM ===== */
+.form-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+    gap:20px;
 }
 
 input{
-    padding:8px;
-    margin:5px;
+    padding:12px 15px;
+    border-radius:8px;
+    border:1px solid #cbd5e1;
+    font-size:14px;
+    transition:0.3s;
 }
 
-button{
-    padding:8px 14px;
+input:focus{
+    outline:none;
+    border-color:#046393;
+    box-shadow:0 0 0 2px rgba(4,99,147,0.2);
+}
+
+/* ===== BUTTONS ===== */
+.btn-primary{
+    margin-top:20px;
+    padding:12px 18px;
+    background:#046393;
+    color:white;
+    border:none;
+    border-radius:8px;
+    font-weight:600;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+.btn-primary:hover{
+    background:#03527a;
+}
+
+.btn-danger{
+    background:#dc2626;
+    color:white;
+    border:none;
+    padding:6px 10px;
+    border-radius:6px;
     cursor:pointer;
 }
 
-.status-box{
-    padding:15px;
-    margin-top:10px;
-    border-radius:8px;
-    font-weight:bold;
+.btn-success{
+    background:#16a34a;
+    color:white;
+    border:none;
+    padding:6px 10px;
+    border-radius:6px;
+    cursor:pointer;
 }
 
-.green{background:#d1fae5;color:#065f46;}
-.yellow{background:#fef3c7;color:#92400e;}
+/* ===== STATUS ===== */
+.status-box{
+    margin-top:15px;
+    padding:15px;
+    border-radius:10px;
+    font-weight:600;
+}
+
+.green{background:#dcfce7;color:#166534;}
+.yellow{background:#fef9c3;color:#854d0e;}
 .red{background:#fee2e2;color:#991b1b;}
+
+/* ===== TABLE ===== */
+.table-wrapper{
+    overflow-x:auto;
+}
 
 table{
     width:100%;
     border-collapse:collapse;
-    background:white;
-}
-
-th,td{
-    padding:10px;
-    border:1px solid #ddd;
-    text-align:center;
+    margin-top:20px;
 }
 
 th{
-    background:#1f2937;
+    background:#0f172a;
     color:white;
+    padding:12px;
+    font-size:14px;
 }
 
+td{
+    padding:12px;
+    border-bottom:1px solid #e2e8f0;
+    text-align:center;
+}
+
+tr:hover{
+    background:#f8fafc;
+}
+
+/* ===== PDF DESIGN (NÃO ALTERADO) ===== */
 .pdf-container{
     padding:30px;
     font-family:Arial;
@@ -102,65 +209,71 @@ th{
     border-top:2px solid #000;
     margin:15px 0;
 }
+
 </style>
 </head>
-
 <body>
 
 <nav>
-    <img src="assets/logo.png">
-    <button onclick="mostrarNovo()">Novo Remanejo</button>
-    <button onclick="mostrarCadastrados()">Remanejos Cadastrados</button>
+    <div class="nav-left">
+        <img src="assets/logo.png">
+        <h1>Santa Rosa Malhas</h1>
+    </div>
+    <div class="nav-buttons">
+        <button onclick="mostrarNovo()">Novo Remanejo</button>
+        <button onclick="mostrarCadastrados()">Remanejos Cadastrados</button>
+    </div>
 </nav>
 
 <div class="container">
 
-<div id="novo">
+<!-- NOVO -->
+<div id="novo" class="card">
+    <h2>Novo Remanejo</h2>
 
-<h2>Novo Remanejo</h2>
+    <div class="form-grid">
+        <input id="cliente" placeholder="Cliente">
+        <input id="filial" placeholder="Filial">
+        <input id="nf" placeholder="NF">
+        <input id="entrada" type="number" placeholder="Entrada">
+        <input id="saldo" type="number" placeholder="Saldo">
+    </div>
 
-<input id="cliente" placeholder="Cliente">
-<input id="filial" placeholder="Filial">
-<input id="nf" placeholder="NF">
-<input id="entrada" placeholder="Entrada" type="number">
-<input id="saldo" placeholder="Saldo" type="number">
+    <div id="status" class="status-box"></div>
 
-<div id="status" class="status-box"></div>
-
-<button onclick="salvar()">Salvar</button>
-
+    <button class="btn-primary" onclick="salvar()">Salvar Remanejo</button>
 </div>
 
+<!-- CADASTRADOS -->
+<div id="cadastrados" class="card" style="display:none;">
+    <h2>Remanejos Cadastrados</h2>
 
-<div id="cadastrados" style="display:none;">
+    <button class="btn-primary" onclick="gerarPDF()">Baixar PDF Selecionados</button>
 
-<h2>Remanejos Cadastrados</h2>
-
-<button onclick="gerarPDF()">Baixar PDF Selecionados</button>
-
-<table id="tabela">
-<thead>
-<tr>
-<th></th>
-<th>Cliente</th>
-<th>Filial</th>
-<th>NF</th>
-<th>Entrada</th>
-<th>Saldo</th>
-<th>1%</th>
-<th>Nº Romaneio</th>
-<th>Ações</th>
-</tr>
-</thead>
-<tbody></tbody>
-</table>
-
+    <div class="table-wrapper">
+        <table id="tabela">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>Cliente</th>
+                    <th>Filial</th>
+                    <th>NF</th>
+                    <th>Entrada</th>
+                    <th>Saldo</th>
+                    <th>1%</th>
+                    <th>Nº Romaneio</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
 </div>
 
 </div>
-
 
 <script>
+
 const URL="https://script.google.com/macros/s/AKfycbwtN7wsDMRR4_cv3iU0FsAyKtJ-7Cxuzhe4M-P-iHzeSlXnPhfvftuH8WBf9m8GblSK/exec";
 
 const entrada=document.getElementById("entrada");
@@ -332,6 +445,7 @@ document.getElementById("novo").style.display="none";
 document.getElementById("cadastrados").style.display="block";
 carregar();
 }
+
 </script>
 
 </body>
