@@ -10,11 +10,10 @@
 <style>
 body{
     margin:0;
-    font-family:Arial, sans-serif;
+    font-family:Arial;
     background:#f4f6f9;
 }
 
-/* NAVBAR */
 .navbar{
     background:#046393;
     padding:15px 30px;
@@ -40,11 +39,6 @@ body{
     font-weight:bold;
 }
 
-.nav-links span:hover{
-    text-decoration:underline;
-}
-
-/* CONTAINER */
 .container{
     max-width:1200px;
     margin:40px auto;
@@ -52,11 +46,6 @@ body{
     padding:30px;
     border-radius:10px;
     box-shadow:0 8px 25px rgba(0,0,0,0.08);
-}
-
-h2{
-    margin-bottom:20px;
-    color:#046393;
 }
 
 input{
@@ -68,7 +57,7 @@ input{
 }
 
 button{
-    padding:10px 15px;
+    padding:8px 12px;
     border:none;
     border-radius:6px;
     cursor:pointer;
@@ -77,24 +66,14 @@ button{
     color:white;
 }
 
-button:hover{
-    opacity:0.9;
+.btn-red{
+    background:#c0392b;
 }
 
-/* STATUS BOX */
-.status-box{
-    padding:15px;
-    border-radius:8px;
-    margin-bottom:15px;
-    font-weight:bold;
-    transition:0.3s;
+.btn-green{
+    background:#27ae60;
 }
 
-.green{ background:#d4edda; color:#155724; }
-.yellow{ background:#fff3cd; color:#856404; }
-.red{ background:#f8d7da; color:#721c24; }
-
-/* TABELA */
 table{
     width:100%;
     border-collapse:collapse;
@@ -111,17 +90,17 @@ th{
     color:white;
 }
 
-td[contenteditable="true"]{
-    background:#f9f9f9;
+.status-box{
+    padding:15px;
+    border-radius:8px;
+    margin-bottom:15px;
+    font-weight:bold;
 }
 
-.btn-red{
-    background:#c0392b;
-}
+.green{ background:#d4edda; color:#155724; }
+.yellow{ background:#fff3cd; color:#856404; }
+.red{ background:#f8d7da; color:#721c24; }
 
-.btn-green{
-    background:#27ae60;
-}
 </style>
 </head>
 <body>
@@ -137,12 +116,11 @@ td[contenteditable="true"]{
     </div>
 </div>
 
-<!-- NOVO REMANEJO -->
 <div class="container" id="novo">
     <h2>Novo Remanejo</h2>
 
     <input type="text" id="cliente" placeholder="Cliente">
-    <input type="text" id="filial" placeholder="Cliente Filial">
+    <input type="text" id="filial" placeholder="Filial">
     <input type="text" id="nf" placeholder="NF">
     <input type="number" id="entrada" placeholder="Entrada" oninput="verificarValor()">
     <input type="number" id="saldo" placeholder="Saldo" oninput="verificarValor()">
@@ -152,14 +130,13 @@ td[contenteditable="true"]{
     <button onclick="salvar()">Salvar</button>
 </div>
 
-<!-- LISTA -->
 <div class="container" id="lista" style="display:none;">
     <h2>Remanejos Cadastrados</h2>
 
     <button class="btn-green" onclick="gerarPDFSelecionados()">Gerar PDF Selecionados</button>
     <br><br>
 
-    <table id="tabela">
+    <table>
         <thead>
             <tr>
                 <th>✓</th>
@@ -173,15 +150,15 @@ td[contenteditable="true"]{
                 <th>Ações</th>
             </tr>
         </thead>
-        <tbody></tbody>
+        <tbody id="tbody"></tbody>
     </table>
 </div>
 
 <script>
 
-const URL = "https://script.google.com/macros/s/AKfycbyaaGZBEB7gsiFrQIS4LewAVdbEwztqxclMEOCvFnULAPjL6JDmJZwYTrMXANTTpe4/exec";
+const URL="https://script.google.com/macros/s/AKfycbzLlkVgtNpwghQAWcW5byXBdkR3g5P66oWsOZvlGv76Lm9bw_46HI0EYkLCIgfjBvYR/exec";
 
-/* NAVEGAÇÃO */
+/* Navegação */
 function mostrarNovo(){
     novo.style.display="block";
     lista.style.display="none";
@@ -193,147 +170,129 @@ function mostrarLista(){
     carregarDados();
 }
 
-/* VALIDAÇÃO INTELIGENTE */
+/* Validação */
 function verificarValor(){
-    let entrada=parseFloat(entrada.value)||0;
-    let saldo=parseFloat(saldo.value)||0;
-    let umPorCento=entrada*0.01;
+    let e=parseFloat(entrada.value)||0;
+    let s=parseFloat(saldo.value)||0;
+    let um=e*0.01;
 
-    let box=document.getElementById("statusBox");
-    box.innerHTML="1% da Entrada: R$ "+umPorCento.toFixed(2);
+    statusBox.innerHTML="1% da Entrada: R$ "+um.toFixed(2);
 
-    if(saldo<umPorCento){
-        box.className="status-box green";
-        box.innerHTML+="<br>Saldo menor que 1% — Autorizado.";
-    }else if(saldo==umPorCento){
-        box.className="status-box yellow";
-        box.innerHTML+="<br>Saldo igual a 1% — Confirmação necessária.";
+    if(s<um){
+        statusBox.className="status-box green";
+    }else if(s==um){
+        statusBox.className="status-box yellow";
     }else{
-        box.className="status-box red";
-        box.innerHTML+="<br>Saldo maior que 1% — Exige autorização superior.";
+        statusBox.className="status-box red";
     }
 }
 
-/* SALVAR NOVO */
+/* Criar */
 function salvar(){
-    let entradaVal=parseFloat(entrada.value)||0;
-    let saldoVal=parseFloat(saldo.value)||0;
-    let umPorCento=entradaVal*0.01;
-
-    if(saldoVal>umPorCento){
-        alert("⚠️ Saldo maior que 1%. Necessário autorização superior.");
-        return;
-    }
-
-    if(saldoVal==umPorCento){
-        if(!confirm("Saldo igual a 1%. Deseja realmente salvar?")) return;
-    }
-
     fetch(URL,{
         method:"POST",
         body:JSON.stringify({
+            acao:"criar",
             cliente:cliente.value,
             filial:filial.value,
             nf:nf.value,
-            entrada:entradaVal,
-            saldo:saldoVal
+            entrada:entrada.value,
+            saldo:saldo.value
         })
     }).then(()=>location.reload());
 }
 
-/* CARREGAR DADOS */
+/* Carregar */
 function carregarDados(){
     fetch(URL)
     .then(res=>res.json())
     .then(dados=>{
-        let tbody=document.querySelector("#tabela tbody");
         tbody.innerHTML="";
-
-        dados.forEach((linha,index)=>{
+        dados.forEach(item=>{
             tbody.innerHTML+=`
             <tr>
-                <td><input type="checkbox" class="selecionar" value="${index}"></td>
-                <td contenteditable="true">${linha[0]}</td>
-                <td contenteditable="true">${linha[1]}</td>
-                <td contenteditable="true">${linha[2]}</td>
-                <td contenteditable="true">${linha[3]}</td>
-                <td contenteditable="true">${linha[4]}</td>
-                <td>${linha[5]}</td>
-                <td contenteditable="true">${linha[6]||""}</td>
+                <td><input type="checkbox" class="check"></td>
+                <td contenteditable="true">${item.cliente}</td>
+                <td contenteditable="true">${item.filial}</td>
+                <td contenteditable="true">${item.nf}</td>
+                <td contenteditable="true">${item.entrada}</td>
+                <td contenteditable="true">${item.saldo}</td>
+                <td>${item.umPorCento}</td>
+                <td contenteditable="true">${item.romaneio||""}</td>
                 <td>
-                    <button onclick="salvarEdicao(this,${index})">Salvar</button>
-                    <button class="btn-red" onclick="excluir(${index})">Excluir</button>
+                    <button onclick="editar(this,${item.linha})">Salvar</button>
+                    <button class="btn-red" onclick="excluir(${item.linha})">Excluir</button>
                 </td>
             </tr>`;
         });
     });
 }
 
-/* EDITAR */
-function salvarEdicao(btn,index){
-    let linha=btn.parentElement.parentElement;
-    let c=linha.querySelectorAll("td");
+/* Editar */
+function editar(btn,linha){
+    let tr=btn.closest("tr");
+    let c=tr.querySelectorAll("td");
 
-    let entradaVal=parseFloat(c[4].innerText);
-    let umPorCento=entradaVal*0.01;
+    let entradaVal=parseFloat(c[4].innerText)||0;
+    let um=entradaVal*0.01;
 
     fetch(URL,{
-        method:"PUT",
+        method:"POST",
         body:JSON.stringify({
-            index:index,
+            acao:"editar",
+            linha:linha,
             cliente:c[1].innerText,
             filial:c[2].innerText,
             nf:c[3].innerText,
             entrada:entradaVal,
             saldo:c[5].innerText,
-            umPorCento:umPorCento,
+            umPorCento:um,
             romaneio:c[7].innerText
         })
-    }).then(()=>alert("Atualizado com sucesso!"));
+    }).then(()=>{
+        alert("Atualizado!");
+        carregarDados();
+    });
 }
 
-/* EXCLUIR */
-function excluir(index){
-    if(!confirm("Deseja realmente excluir?")) return;
+/* Excluir */
+function excluir(linha){
+    if(!confirm("Deseja excluir este registro?")) return;
 
     fetch(URL,{
-        method:"DELETE",
-        body:JSON.stringify({index:index})
+        method:"POST",
+        body:JSON.stringify({
+            acao:"excluir",
+            linha:linha
+        })
     }).then(()=>{
         alert("Excluído com sucesso!");
         carregarDados();
     });
 }
 
-/* PDF PROFISSIONAL */
+/* PDF */
 async function gerarPDFSelecionados(){
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
 
-    let selecionados=document.querySelectorAll(".selecionar:checked");
-    if(selecionados.length==0){
-        alert("Selecione ao menos uma linha.");
+    let checks=document.querySelectorAll(".check:checked");
+
+    if(checks.length==0){
+        alert("Selecione pelo menos uma linha.");
         return;
     }
 
     doc.addImage("assets/logo.png","PNG",15,10,40,20);
-
-    doc.setFontSize(20);
+    doc.setFontSize(18);
     doc.text("Santa Rosa Malhas",70,20);
 
-    doc.setFontSize(13);
-    doc.text("Relatório Oficial de Remanejo",70,30);
+    let y=50;
 
-    doc.setDrawColor(4,99,147);
-    doc.line(10,40,200,40);
+    checks.forEach(check=>{
+        let tr=check.closest("tr");
+        let c=tr.querySelectorAll("td");
 
-    let y=55;
-
-    selecionados.forEach(check=>{
-        let linha=check.parentElement.parentElement;
-        let c=linha.querySelectorAll("td");
-
-        doc.setFontSize(12);
         doc.text("Cliente: "+c[1].innerText,15,y);
         doc.text("Filial: "+c[2].innerText,110,y);
         y+=8;
@@ -345,7 +304,6 @@ async function gerarPDFSelecionados(){
 
         doc.text("1%: "+c[6].innerText,15,y);
         doc.text("Nº Romaneio: "+c[7].innerText,90,y);
-
         y+=15;
 
         if(y>270){
@@ -354,10 +312,9 @@ async function gerarPDFSelecionados(){
         }
     });
 
-    doc.save("Relatorio_Remanejo_Santa_Rosa_Malhas.pdf");
+    doc.save("Relatorio_Remanejo.pdf");
 }
 
 </script>
-
 </body>
 </html>
