@@ -1,320 +1,338 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html>
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Santa Rosa Malhas - Controle de Remanejo</title>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<title>Santa Rosa Malhas - Remanejo</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
 <style>
 body{
-    margin:0;
     font-family:Arial;
+    margin:0;
     background:#f4f6f9;
 }
 
-.navbar{
-    background:#046393;
+nav{
+    background:#111827;
+    color:white;
     padding:15px 30px;
     display:flex;
-    justify-content:space-between;
     align-items:center;
+    gap:20px;
+}
+
+nav img{
+    height:40px;
+}
+
+nav button{
+    background:none;
+    border:none;
     color:white;
-}
-
-.nav-left{
-    display:flex;
-    align-items:center;
-    gap:15px;
-}
-
-.nav-left img{
-    height:45px;
-}
-
-.nav-links span{
-    margin-left:25px;
+    font-size:16px;
     cursor:pointer;
-    font-weight:bold;
 }
 
 .container{
-    max-width:1200px;
-    margin:40px auto;
-    background:white;
     padding:30px;
-    border-radius:10px;
-    box-shadow:0 8px 25px rgba(0,0,0,0.08);
 }
 
 input{
-    width:100%;
-    padding:10px;
-    margin-bottom:12px;
-    border-radius:6px;
-    border:1px solid #ccc;
+    padding:8px;
+    margin:5px;
 }
 
 button{
-    padding:8px 12px;
-    border:none;
-    border-radius:6px;
+    padding:8px 14px;
     cursor:pointer;
-    font-weight:bold;
-    background:#046393;
-    color:white;
-}
-
-.btn-red{
-    background:#c0392b;
-}
-
-.btn-green{
-    background:#27ae60;
-}
-
-table{
-    width:100%;
-    border-collapse:collapse;
-}
-
-th,td{
-    border:1px solid #ddd;
-    padding:8px;
-    text-align:center;
-}
-
-th{
-    background:#046393;
-    color:white;
 }
 
 .status-box{
     padding:15px;
+    margin-top:10px;
     border-radius:8px;
-    margin-bottom:15px;
     font-weight:bold;
 }
 
-.green{ background:#d4edda; color:#155724; }
-.yellow{ background:#fff3cd; color:#856404; }
-.red{ background:#f8d7da; color:#721c24; }
+.green{background:#d1fae5;color:#065f46;}
+.yellow{background:#fef3c7;color:#92400e;}
+.red{background:#fee2e2;color:#991b1b;}
 
+table{
+    width:100%;
+    border-collapse:collapse;
+    background:white;
+}
+
+th,td{
+    padding:10px;
+    border:1px solid #ddd;
+    text-align:center;
+}
+
+th{
+    background:#1f2937;
+    color:white;
+}
+
+.pdf-container{
+    padding:30px;
+    font-family:Arial;
+}
+
+.pdf-header{
+    display:flex;
+    align-items:center;
+    gap:20px;
+    border-bottom:3px solid #111;
+    padding-bottom:10px;
+    margin-bottom:20px;
+}
+
+.pdf-header img{
+    height:70px;
+}
+
+.pdf-title{
+    font-size:24px;
+    font-weight:bold;
+}
+
+.divisor{
+    border-top:2px solid #000;
+    margin:15px 0;
+}
 </style>
 </head>
+
 <body>
 
-<div class="navbar">
-    <div class="nav-left">
-        <img src="assets/logo.png">
-        <strong>Santa Rosa Malhas</strong>
-    </div>
-    <div class="nav-links">
-        <span onclick="mostrarNovo()">Novo Remanejo</span>
-        <span onclick="mostrarLista()">Remanejos Cadastrados</span>
-    </div>
+<nav>
+    <img src="assets/logo.png">
+    <button onclick="mostrarNovo()">Novo Remanejo</button>
+    <button onclick="mostrarCadastrados()">Remanejos Cadastrados</button>
+</nav>
+
+<div class="container">
+
+<div id="novo">
+
+<h2>Novo Remanejo</h2>
+
+<input id="cliente" placeholder="Cliente">
+<input id="filial" placeholder="Filial">
+<input id="nf" placeholder="NF">
+<input id="entrada" placeholder="Entrada" type="number">
+<input id="saldo" placeholder="Saldo" type="number">
+
+<div id="status" class="status-box"></div>
+
+<button onclick="salvar()">Salvar</button>
+
 </div>
 
-<div class="container" id="novo">
-    <h2>Novo Remanejo</h2>
 
-    <input type="text" id="cliente" placeholder="Cliente">
-    <input type="text" id="filial" placeholder="Filial">
-    <input type="text" id="nf" placeholder="NF">
-    <input type="number" id="entrada" placeholder="Entrada" oninput="verificarValor()">
-    <input type="number" id="saldo" placeholder="Saldo" oninput="verificarValor()">
+<div id="cadastrados" style="display:none;">
 
-    <div id="statusBox" class="status-box"></div>
+<h2>Remanejos Cadastrados</h2>
 
-    <button onclick="salvar()">Salvar</button>
+<button onclick="gerarPDF()">Baixar PDF Selecionados</button>
+
+<table id="tabela">
+<thead>
+<tr>
+<th></th>
+<th>Cliente</th>
+<th>Filial</th>
+<th>NF</th>
+<th>Entrada</th>
+<th>Saldo</th>
+<th>1%</th>
+<th>Nº Romaneio</th>
+<th>Ações</th>
+</tr>
+</thead>
+<tbody></tbody>
+</table>
+
 </div>
 
-<div class="container" id="lista" style="display:none;">
-    <h2>Remanejos Cadastrados</h2>
-
-    <button class="btn-green" onclick="gerarPDFSelecionados()">Gerar PDF Selecionados</button>
-    <br><br>
-
-    <table>
-        <thead>
-            <tr>
-                <th>✓</th>
-                <th>Cliente</th>
-                <th>Filial</th>
-                <th>NF</th>
-                <th>Entrada</th>
-                <th>Saldo</th>
-                <th>1%</th>
-                <th>Nº Romaneio</th>
-                <th>Ações</th>
-            </tr>
-        </thead>
-        <tbody id="tbody"></tbody>
-    </table>
 </div>
+
 
 <script>
+const URL="https://script.google.com/macros/s/AKfycbwtN7wsDMRR4_cv3iU0FsAyKtJ-7Cxuzhe4M-P-iHzeSlXnPhfvftuH8WBf9m8GblSK/exec";
 
-const URL="https://script.google.com/macros/s/AKfycbzLlkVgtNpwghQAWcW5byXBdkR3g5P66oWsOZvlGv76Lm9bw_46HI0EYkLCIgfjBvYR/exec";
+const entrada=document.getElementById("entrada");
+const saldo=document.getElementById("saldo");
+const statusBox=document.getElementById("status");
 
-/* Navegação */
-function mostrarNovo(){
-    novo.style.display="block";
-    lista.style.display="none";
+entrada.addEventListener("input",calcular);
+saldo.addEventListener("input",calcular);
+
+function calcular(){
+let e=parseFloat(entrada.value)||0;
+let s=parseFloat(saldo.value)||0;
+let um=e*0.01;
+
+if(e>0){
+statusBox.innerHTML="1% da entrada: "+um.toFixed(2);
 }
 
-function mostrarLista(){
-    novo.style.display="none";
-    lista.style.display="block";
-    carregarDados();
+if(s<um){
+statusBox.className="status-box green";
+statusBox.innerHTML+=" ✔ Autorizado";
+}
+else if(s==um){
+statusBox.className="status-box yellow";
+statusBox.innerHTML+=" ⚠ Confirmar ao salvar";
+}
+else{
+statusBox.className="status-box red";
+statusBox.innerHTML+=" ✖ Superior necessário";
+}
 }
 
-/* Validação */
-function verificarValor(){
-    let e=parseFloat(entrada.value)||0;
-    let s=parseFloat(saldo.value)||0;
-    let um=e*0.01;
-
-    statusBox.innerHTML="1% da Entrada: R$ "+um.toFixed(2);
-
-    if(s<um){
-        statusBox.className="status-box green";
-    }else if(s==um){
-        statusBox.className="status-box yellow";
-    }else{
-        statusBox.className="status-box red";
-    }
-}
-
-/* Criar */
 function salvar(){
-    fetch(URL,{
-        method:"POST",
-        body:JSON.stringify({
-            acao:"criar",
-            cliente:cliente.value,
-            filial:filial.value,
-            nf:nf.value,
-            entrada:entrada.value,
-            saldo:saldo.value
-        })
-    }).then(()=>location.reload());
+let e=parseFloat(entrada.value)||0;
+let s=parseFloat(saldo.value)||0;
+let um=e*0.01;
+
+if(s>um){
+alert("Saldo maior que 1%");
+return;
 }
 
-/* Carregar */
-function carregarDados(){
-    fetch(URL)
-    .then(res=>res.json())
-    .then(dados=>{
-        tbody.innerHTML="";
-        dados.forEach(item=>{
-            tbody.innerHTML+=`
-            <tr>
-                <td><input type="checkbox" class="check"></td>
-                <td contenteditable="true">${item.cliente}</td>
-                <td contenteditable="true">${item.filial}</td>
-                <td contenteditable="true">${item.nf}</td>
-                <td contenteditable="true">${item.entrada}</td>
-                <td contenteditable="true">${item.saldo}</td>
-                <td>${item.umPorCento}</td>
-                <td contenteditable="true">${item.romaneio||""}</td>
-                <td>
-                    <button onclick="editar(this,${item.linha})">Salvar</button>
-                    <button class="btn-red" onclick="excluir(${item.linha})">Excluir</button>
-                </td>
-            </tr>`;
-        });
-    });
+if(s==um){
+if(!confirm("Saldo igual a 1%. Deseja salvar?"))return;
 }
 
-/* Editar */
-function editar(btn,linha){
-    let tr=btn.closest("tr");
-    let c=tr.querySelectorAll("td");
-
-    let entradaVal=parseFloat(c[4].innerText)||0;
-    let um=entradaVal*0.01;
-
-    fetch(URL,{
-        method:"POST",
-        body:JSON.stringify({
-            acao:"editar",
-            linha:linha,
-            cliente:c[1].innerText,
-            filial:c[2].innerText,
-            nf:c[3].innerText,
-            entrada:entradaVal,
-            saldo:c[5].innerText,
-            umPorCento:um,
-            romaneio:c[7].innerText
-        })
-    }).then(()=>{
-        alert("Atualizado!");
-        carregarDados();
-    });
+fetch(URL,{
+method:"POST",
+body:JSON.stringify({
+acao:"criar",
+cliente:cliente.value,
+filial:filial.value,
+nf:nf.value,
+entrada:e,
+saldo:s
+})
+}).then(()=>location.reload());
 }
 
-/* Excluir */
-function excluir(linha){
-    if(!confirm("Deseja excluir este registro?")) return;
-
-    fetch(URL,{
-        method:"POST",
-        body:JSON.stringify({
-            acao:"excluir",
-            linha:linha
-        })
-    }).then(()=>{
-        alert("Excluído com sucesso!");
-        carregarDados();
-    });
+function carregar(){
+fetch(URL)
+.then(res=>res.json())
+.then(dados=>{
+let tbody=document.querySelector("#tabela tbody");
+tbody.innerHTML="";
+dados.forEach((d,i)=>{
+tbody.innerHTML+=`
+<tr>
+<td><input type="checkbox"></td>
+<td contenteditable>${d[0]}</td>
+<td contenteditable>${d[1]}</td>
+<td contenteditable>${d[2]}</td>
+<td contenteditable>${d[3]}</td>
+<td contenteditable>${d[4]}</td>
+<td>${d[5]}</td>
+<td contenteditable>${d[6]||""}</td>
+<td>
+<button onclick="editar(this,${i})">Salvar</button>
+<button onclick="excluir(${i})">Excluir</button>
+</td>
+</tr>`;
+});
+});
 }
 
-/* PDF */
-async function gerarPDFSelecionados(){
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF();
+function editar(btn,index){
+let tr=btn.closest("tr");
+let tds=tr.querySelectorAll("td");
 
-    let checks=document.querySelectorAll(".check:checked");
-
-    if(checks.length==0){
-        alert("Selecione pelo menos uma linha.");
-        return;
-    }
-
-    doc.addImage("assets/logo.png","PNG",15,10,40,20);
-    doc.setFontSize(18);
-    doc.text("Santa Rosa Malhas",70,20);
-
-    let y=50;
-
-    checks.forEach(check=>{
-        let tr=check.closest("tr");
-        let c=tr.querySelectorAll("td");
-
-        doc.text("Cliente: "+c[1].innerText,15,y);
-        doc.text("Filial: "+c[2].innerText,110,y);
-        y+=8;
-
-        doc.text("NF: "+c[3].innerText,15,y);
-        doc.text("Entrada: "+c[4].innerText,70,y);
-        doc.text("Saldo: "+c[5].innerText,130,y);
-        y+=8;
-
-        doc.text("1%: "+c[6].innerText,15,y);
-        doc.text("Nº Romaneio: "+c[7].innerText,90,y);
-        y+=15;
-
-        if(y>270){
-            doc.addPage();
-            y=20;
-        }
-    });
-
-    doc.save("Relatorio_Remanejo.pdf");
+fetch(URL,{
+method:"POST",
+body:JSON.stringify({
+acao:"editar",
+index:index,
+cliente:tds[1].innerText,
+filial:tds[2].innerText,
+nf:tds[3].innerText,
+entrada:tds[4].innerText,
+saldo:tds[5].innerText,
+umPorCento:tds[6].innerText,
+romaneio:tds[7].innerText
+})
+}).then(()=>carregar());
 }
 
+function excluir(index){
+if(!confirm("Deseja excluir?"))return;
+
+fetch(URL,{
+method:"POST",
+body:JSON.stringify({
+acao:"excluir",
+index:index
+})
+}).then(()=>carregar());
+}
+
+function gerarPDF(){
+let selecionados=document.querySelectorAll("tbody tr input:checked");
+if(selecionados.length==0){alert("Selecione linhas");return;}
+
+let div=document.createElement("div");
+div.className="pdf-container";
+
+div.innerHTML=`
+<div class="pdf-header">
+<img src="assets/logo.png">
+<div>
+<div class="pdf-title">Santa Rosa Malhas</div>
+<div>CNPJ: 81.326.084/0003-11</div>
+<div>Relatório Oficial de Remanejo</div>
+</div>
+</div>
+`;
+
+selecionados.forEach(cb=>{
+let tr=cb.closest("tr");
+let tds=tr.querySelectorAll("td");
+
+div.innerHTML+=`
+<div>
+<b>Cliente:</b> ${tds[1].innerText} |
+<b>Filial:</b> ${tds[2].innerText}
+<br>
+<b>NF:</b> ${tds[3].innerText}
+<br>
+<b>Entrada:</b> ${tds[4].innerText}
+&nbsp;&nbsp;
+<b>Saldo:</b> ${tds[5].innerText}
+<br>
+<b>1%:</b> ${tds[6].innerText}
+&nbsp;&nbsp;
+<b>Nº Romaneio:</b> ${tds[7].innerText}
+</div>
+<div class="divisor"></div>
+`;
+});
+
+html2pdf().from(div).save("Relatorio_Remanejo_Santa_Rosa_Malhas.pdf");
+}
+
+function mostrarNovo(){
+document.getElementById("novo").style.display="block";
+document.getElementById("cadastrados").style.display="none";
+}
+
+function mostrarCadastrados(){
+document.getElementById("novo").style.display="none";
+document.getElementById("cadastrados").style.display="block";
+carregar();
+}
 </script>
+
 </body>
 </html>
