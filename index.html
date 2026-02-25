@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Controle de Manejo de Fios</title>
+
+<style>
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f4f6f9;
+}
+
+.navbar {
+    background-color: #046393;
+    padding: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: white;
+}
+
+.logo {
+    height: 40px;
+}
+
+.container {
+    max-width: 800px;
+    margin: 40px auto;
+    background: white;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+h2 {
+    margin-bottom: 20px;
+    color: #046393;
+}
+
+input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+button {
+    width: 100%;
+    padding: 12px;
+    background-color: #046393;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #03527a;
+}
+
+.sucesso {
+    margin-top: 15px;
+    color: green;
+    font-weight: bold;
+}
+</style>
+</head>
+
+<body>
+
+<div class="navbar">
+    <div>
+        <strong>Controle de Manejo de Fios</strong>
+    </div>
+    <div>
+        <!-- Coloque sua logo aqui -->
+        <img src="assets/logo.png" class="logo">
+    </div>
+</div>
+
+<div class="container">
+    <h2>Cadastro de Manejo</h2>
+
+    <input type="text" id="cliente" placeholder="Cliente" required>
+    <input type="text" id="filial" placeholder="Cliente Filial" required>
+    <input type="text" id="nf" placeholder="NF" required>
+    <input type="number" id="entrada" placeholder="Entrada" required>
+    <input type="text" id="saldo" placeholder="Saldo" required>
+
+    <button onclick="salvarDados()">Salvar</button>
+
+    <div class="sucesso" id="mensagem"></div>
+</div>
+
+<script>
+function salvarDados() {
+
+    const dados = {
+        cliente: document.getElementById("cliente").value,
+        filial: document.getElementById("filial").value,
+        nf: document.getElementById("nf").value,
+        entrada: document.getElementById("entrada").value,
+        saldo: document.getElementById("saldo").value
+    };
+
+    fetch("https://script.google.com/macros/s/AKfycbwKuww5_2h1Xx0uzh2rWAzHiAwwDMn0UHgD67MZZ8WSpAiYAjHulcUoxnO3EG8__zoc/exec", {
+        method: "POST",
+        body: JSON.stringify(dados)
+    })
+    .then(response => response.json())
+    .then(data => {
+        document.getElementById("mensagem").innerText = "Dados salvos com sucesso!";
+        
+        document.querySelectorAll("input").forEach(input => input.value = "");
+    })
+    .catch(error => {
+        document.getElementById("mensagem").innerText = "Erro ao salvar.";
+    });
+}
+</script>
+
+</body>
+</html>
