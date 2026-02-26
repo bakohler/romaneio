@@ -2,136 +2,122 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Santa Rosa Malhas - Remanejo</title>
-
+<title>Santa Rosa Malhas - Sistema Corporativo</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:Segoe UI;background:#f4f6f9}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:Segoe UI;background:#f1f5f9;color:#1e293b}
 
 /* NAVBAR */
 nav{
 background:#046393;
-padding:15px 40px;
+padding:18px 40px;
 display:flex;
 justify-content:space-between;
 align-items:center;
 color:white;
+box-shadow:0 4px 15px rgba(0,0,0,0.2);
 }
 nav img{height:45px}
-nav h1{font-size:20px}
 nav button{
-background:none;
-border:none;
-color:white;
-margin-left:25px;
-font-size:15px;
-cursor:pointer;
-font-weight:500;
+background:none;border:none;color:white;
+font-size:15px;margin-left:25px;
+cursor:pointer;font-weight:500;
 }
 
-.container{
-max-width:1300px;
-margin:40px auto;
-padding:20px;
-}
-
+/* CONTAINER */
+.container{max-width:1300px;margin:40px auto;padding:20px}
 .card{
 background:white;
-padding:30px;
-border-radius:12px;
-box-shadow:0 5px 20px rgba(0,0,0,0.08);
+padding:35px;
+border-radius:14px;
+box-shadow:0 10px 25px rgba(0,0,0,0.08);
 margin-bottom:30px;
 }
 
-h2{margin-bottom:20px}
-
-input{
-padding:10px;
-border-radius:6px;
-border:1px solid #ccc;
-width:100%;
-}
-
-.grid{
+/* FORM */
+.form-grid{
 display:grid;
-grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
-gap:15px;
+grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+gap:20px;
 }
-
-#umPorCentoBox{
-margin-top:10px;
-padding:15px;
-border-radius:10px;
-text-align:center;
-font-weight:bold;
-font-size:18px;
-background:#e2e8f0;
+input{
+padding:12px;
+border-radius:8px;
+border:1px solid #cbd5e1;
+}
+input:focus{
+outline:none;
+border-color:#046393;
+box-shadow:0 0 0 2px rgba(4,99,147,0.2);
 }
 
 .btn{
-margin-top:20px;
-padding:10px 15px;
-background:#046393;
-color:white;
+padding:10px 16px;
 border:none;
-border-radius:6px;
+border-radius:8px;
 cursor:pointer;
+font-weight:600;
 }
+.btn-primary{background:#046393;color:white}
+.btn-danger{background:#dc2626;color:white}
+.btn-success{background:#16a34a;color:white}
 
+/* STATUS */
+.status-box{
+margin-top:15px;
+padding:15px;
+border-radius:10px;
+font-weight:600;
+text-align:center;
+}
+.green{background:#dcfce7;color:#166534}
+.yellow{background:#fef9c3;color:#854d0e}
+.red{background:#fee2e2;color:#991b1b}
+
+/* TABLE */
 table{
 width:100%;
 border-collapse:collapse;
 margin-top:20px;
 }
-
 th{
 background:#046393;
 color:white;
-padding:10px;
+padding:12px;
 }
-
 td{
-padding:10px;
-border-bottom:1px solid #ddd;
+padding:12px;
+border-bottom:1px solid #e2e8f0;
 text-align:center;
 }
+tr:hover{background:#f8fafc}
 
-.status-green{color:#16a34a;font-weight:bold}
-.status-yellow{color:#f59e0b;font-weight:bold}
-.status-red{color:#f97316;font-weight:bold}
-
-.modal{
+/* MODAL */
+.modal-bg{
 position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
+top:0;left:0;
+width:100%;height:100%;
 background:rgba(0,0,0,0.6);
-display:none;
+display:flex;
 justify-content:center;
 align-items:center;
+z-index:999;
 }
-
-.modal-box{
+.modal{
 background:white;
 padding:30px;
-border-radius:10px;
+border-radius:12px;
 width:400px;
 text-align:center;
 }
+.modal button{margin-top:15px}
 
-.modal-box button{
-margin-top:15px;
-padding:8px 15px;
-border:none;
-border-radius:6px;
-cursor:pointer;
-}
-
-.confirm{background:#046393;color:white}
-.cancel{background:#ccc}
+/* ICONS */
+.icon-ok{color:green;font-weight:bold}
+.icon-eq{color:#b45309;font-weight:bold}
+.icon-warn{color:orange;font-weight:bold}
 </style>
 </head>
 <body>
@@ -139,52 +125,50 @@ cursor:pointer;
 <nav>
 <div style="display:flex;align-items:center;gap:15px">
 <img src="assets/logo.png">
-<h1>Santa Rosa Malhas</h1>
+<strong>Santa Rosa Malhas</strong>
 </div>
 <div>
 <button onclick="mostrarNovo()">Novo Remanejo</button>
-<button onclick="mostrarCadastrados()">Remanejos Salvos</button>
+<button onclick="mostrarLista()">Remanejos Salvos</button>
 </div>
 </nav>
 
 <div class="container">
 
+<!-- NOVO -->
 <div id="novo" class="card">
 <h2>Novo Remanejo</h2>
-
-<div class="grid">
+<div class="form-grid">
 <input id="cliente" placeholder="Cliente">
 <input id="filial" placeholder="Filial">
 <input id="nf" placeholder="NF">
 <input id="entrada" type="number" placeholder="Entrada">
 <input id="saldo" type="number" placeholder="Saldo">
 </div>
-
-<div style="margin-top:20px">
-<label><b>1% Permitido:</b></label>
-<div id="umPorCentoBox">0,00</div>
+<div id="status" class="status-box"></div>
+<br>
+<button class="btn btn-primary" onclick="salvar()">Salvar</button>
 </div>
 
-<button class="btn" onclick="salvar()">Salvar</button>
-</div>
-
-<div id="cadastrados" class="card" style="display:none">
+<!-- LISTA -->
+<div id="lista" class="card" style="display:none">
 <h2>Romaneios Salvos</h2>
 
-<button class="btn" onclick="gerarPDF(romaneios)">Gerar PDF</button>
+<button class="btn btn-primary" onclick="opcoesPDF()">PDF</button>
+<button class="btn btn-success" onclick="salvarTodas()">Salvar Todas Modificações</button>
 
 <table>
 <thead>
 <tr>
+<th></th>
 <th>Cliente</th>
 <th>Filial</th>
 <th>NF</th>
 <th>Entrada</th>
 <th>Saldo</th>
 <th>1%</th>
-<th>Nº Romaneio</th>
 <th>Status</th>
-<th>Excluir</th>
+<th>Nº Romaneio</th>
 </tr>
 </thead>
 <tbody id="tbody"></tbody>
@@ -193,160 +177,220 @@ cursor:pointer;
 
 </div>
 
-<div id="modal" class="modal">
-<div class="modal-box">
-<p id="modalTexto"></p>
-<button class="confirm" onclick="confirmarSalvar()">Confirmar</button>
-<button class="cancel" onclick="fecharModal()">Cancelar</button>
-</div>
-</div>
+<div id="modalArea"></div>
 
 <script>
 
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwtN7wsDMRR4_cv3iU0FsAyKtJ-7Cxuzhe4M-P-iHzeSlXnPhfvftuH8WBf9m8GblSK/exec";
+const URL="https://script.google.com/macros/s/AKfycbwtN7wsDMRR4_cv3iU0FsAyKtJ-7Cxuzhe4M-P-iHzeSlXnPhfvftuH8WBf9m8GblSK/exec";
 
-let romaneios=[];
-let statusAtual=null;
-let dadosTemp=null;
+entrada.oninput=calcular;
+saldo.oninput=calcular;
 
-/* ABAS */
-function mostrarNovo(){
-novo.style.display="block";
-cadastrados.style.display="none";
-}
-
-function mostrarCadastrados(){
-novo.style.display="none";
-cadastrados.style.display="block";
-carregarDados();
-}
-
-/* CALCULO */
 function calcular(){
-let entrada=parseFloat(document.getElementById("entrada").value)||0;
-let saldo=parseFloat(document.getElementById("saldo").value)||0;
-let um=entrada*0.01;
+let e=parseFloat(entrada.value)||0;
+let s=parseFloat(saldo.value)||0;
+let um=e*0.01;
 
-umPorCentoBox.innerText=um.toFixed(2);
+status.innerHTML="1%: "+um.toFixed(2);
 
-if(saldo<um){umPorCentoBox.style.background="#dcfce7";statusAtual="verde";}
-else if(saldo==um){umPorCentoBox.style.background="#fef9c3";statusAtual="amarelo";}
-else{umPorCentoBox.style.background="#fee2e2";statusAtual="vermelho";}
+if(s<um){status.className="status-box green";}
+else if(s==um){status.className="status-box yellow";}
+else{status.className="status-box red";}
 }
 
-entrada.addEventListener("input",calcular);
-saldo.addEventListener("input",calcular);
+function modal(msg,callback){
+modalArea.innerHTML=`
+<div class="modal-bg">
+<div class="modal">
+<p>${msg}</p>
+<button class="btn btn-primary" onclick="confirmar()">Confirmar</button>
+<button class="btn btn-danger" onclick="fechar()">Cancelar</button>
+</div>
+</div>`;
 
-/* SALVAR */
+window.confirmar=function(){
+modalArea.innerHTML="";
+callback();
+}
+window.fechar=function(){modalArea.innerHTML="";}
+}
+
 function salvar(){
+let e=parseFloat(entrada.value)||0;
+let s=parseFloat(saldo.value)||0;
+let um=e*0.01;
 
-let dados={
+if(s==um){
+modal("Saldo igual ao 1%. Deseja salvar mesmo?",()=>enviar());
+return;
+}
+if(s>um){
+modal("Saldo MAIOR que o permitido. Deseja salvar mesmo?",()=>enviar());
+return;
+}
+enviar();
+}
+
+function enviar(){
+fetch(URL,{method:"POST",body:JSON.stringify({
+acao:"criar",
 cliente:cliente.value,
 filial:filial.value,
 nf:nf.value,
 entrada:entrada.value,
-saldo:saldo.value,
-numero:""
-};
-
-if(statusAtual==="verde"){
-enviarSalvar(dados);
-return;
+saldo:saldo.value
+})}).then(()=>location.reload());
 }
 
-dadosTemp=dados;
+function mostrarNovo(){novo.style.display="block";lista.style.display="none";}
+function mostrarLista(){novo.style.display="none";lista.style.display="block";carregar();}
 
-if(statusAtual==="amarelo"){
-modalTexto.innerText="Saldo igual a 1%. Deseja salvar mesmo assim?";
-modal.style.display="flex";
-}
-
-if(statusAtual==="vermelho"){
-modalTexto.innerText="Saldo maior que 1%. Necessário autorização superior. Deseja salvar?";
-modal.style.display="flex";
-}
-}
-
-function confirmarSalvar(){
-enviarSalvar(dadosTemp);
-fecharModal();
-}
-
-function fecharModal(){
-modal.style.display="none";
-}
-
-function enviarSalvar(dados){
-fetch(SCRIPT_URL,{
-method:"POST",
-body:JSON.stringify({action:"salvar",dados:dados})
-})
+function carregar(){
+fetch(URL)
 .then(res=>res.json())
-.then(()=>{
-limpar();
-carregarDados();
-mostrarCadastrados();
-});
-}
-
-/* CARREGAR */
-function carregarDados(){
-fetch(SCRIPT_URL+"?action=listar")
-.then(res=>res.json())
-.then(data=>{
-romaneios=data;
-render();
-});
-}
-
-/* RENDER */
-function render(){
+.then(dados=>{
 tbody.innerHTML="";
-romaneios.forEach(r=>{
-let um=r.entrada*0.01;
-let icon="✔";
-let classe="status-green";
-if(r.saldo==um){icon="=";classe="status-yellow";}
-if(r.saldo>um){icon="⚠";classe="status-red";}
+dados.forEach((d,i)=>{
+let statusIcon="";
+let entradaVal=parseFloat(d[3])||0;
+let saldoVal=parseFloat(d[4])||0;
+let um=entradaVal*0.01;
+
+if(saldoVal<um) statusIcon="<span class='icon-ok'>✔</span>";
+else if(saldoVal==um) statusIcon="<span class='icon-eq'>=</span>";
+else statusIcon="<span class='icon-warn'>⚠</span>";
+
 tbody.innerHTML+=`
 <tr>
-<td>${r.cliente}</td>
-<td>${r.filial}</td>
-<td>${r.nf}</td>
-<td>${r.entrada}</td>
-<td>${r.saldo}</td>
-<td>${um.toFixed(2)}</td>
-<td contenteditable="true" onblur="editar('${r.id}',this.innerText)">${r.numero||""}</td>
-<td class="${classe}">${icon}</td>
-<td><button onclick="excluir('${r.id}')">X</button></td>
+<td><input type="checkbox"></td>
+<td contenteditable>${d[0]}</td>
+<td contenteditable>${d[1]}</td>
+<td contenteditable>${d[2]}</td>
+<td contenteditable>${d[3]}</td>
+<td contenteditable>${d[4]}</td>
+<td>${d[5]}</td>
+<td>${statusIcon}</td>
+<td contenteditable>${d[6]||""}</td>
 </tr>`;
+});
 });
 }
 
-function editar(id,valor){
-fetch(SCRIPT_URL,{
+/* SALVAR TODAS */
+function salvarTodas(){
+let linhas=document.querySelectorAll("#tbody tr");
+linhas.forEach((tr,i)=>{
+let tds=tr.querySelectorAll("td");
+fetch(URL,{
 method:"POST",
-body:JSON.stringify({action:"editar",id:id,numero:valor})
-}).then(()=>carregarDados());
+body:JSON.stringify({
+acao:"editar",
+index:i,
+cliente:tds[1].innerText,
+filial:tds[2].innerText,
+nf:tds[3].innerText,
+entrada:tds[4].innerText,
+saldo:tds[5].innerText,
+umPorCento:tds[6].innerText,
+romaneio:tds[8].innerText
+})
+});
+});
+alert("Todas modificações salvas!");
 }
 
-function excluir(id){
-fetch(SCRIPT_URL,{
-method:"POST",
-body:JSON.stringify({action:"excluir",id:id})
-}).then(()=>carregarDados());
+/* OPÇÕES PDF */
+function opcoesPDF(){
+modalArea.innerHTML=`
+<div class="modal-bg">
+<div class="modal">
+<h3>Gerar PDF</h3>
+<button class="btn btn-primary" onclick="gerarPDF('selecionar')">Selecionar</button>
+<button class="btn btn-success" onclick="gerarPDF('todos')">Todos</button>
+<button class="btn btn-danger" onclick="gerarPDF('sem')">Sem Nº Romaneio</button>
+<br><br>
+<button onclick="modalArea.innerHTML=''">Cancelar</button>
+</div>
+</div>`;
 }
 
-/* PDF */
-function gerarPDF(lista){
-if(!lista.length){alert("Nenhum romaneio.");return;}
+/* PDF AVANÇADO */
+function gerarPDF(tipo){
+
+modalArea.innerHTML="";
+
+let linhas=[...document.querySelectorAll("#tbody tr")];
+
+if(tipo=="selecionar")
+linhas=linhas.filter(tr=>tr.querySelector("input").checked);
+
+if(tipo=="sem")
+linhas=linhas.filter(tr=>tr.querySelectorAll("td")[8].innerText.trim()==="");
+
+if(tipo=="todos"){ }
+
+if(linhas.length==0){alert("Nenhum registro.");return;}
+
+let porPagina=9;
+let paginas=Math.ceil(linhas.length/porPagina);
+let agora=new Date();
+let dataHora=agora.toLocaleString();
+
 let container=document.createElement("div");
-container.style.padding="30px";
-container.innerHTML="<h2>Relatório Santa Rosa Malhas</h2>";
-html2pdf().from(container).save();
+container.className="pdf-container";
+
+for(let p=0;p<paginas;p++){
+let inicio=p*porPagina;
+let fim=inicio+porPagina;
+
+container.innerHTML+=`
+<div class="pdf-header">
+<img src="assets/logo.png">
+<div>
+<div class="pdf-title">Santa Rosa Malhas</div>
+<div>CNPJ: 81.326.084/0003-11</div>
+<div>Relatório Oficial de Remanejo</div>
+</div>
+</div>`;
+
+linhas.slice(inicio,fim).forEach(tr=>{
+let tds=tr.querySelectorAll("td");
+let warn="";
+let entradaVal=parseFloat(tds[4].innerText)||0;
+let saldoVal=parseFloat(tds[5].innerText)||0;
+let um=entradaVal*0.01;
+if(saldoVal>um) warn=" ⚠";
+
+container.innerHTML+=`
+<div>
+<b>Cliente:</b> ${tds[1].innerText} | <b>Filial:</b> ${tds[2].innerText}
+<br>
+<b>NF:</b> ${tds[3].innerText}
+<br>
+<b>Entrada:</b> ${tds[4].innerText}
+&nbsp;&nbsp;
+<b>Saldo:</b> ${tds[5].innerText}${warn}
+<br>
+<b>1%:</b> ${tds[6].innerText}
+&nbsp;&nbsp;
+<b>Nº Romaneio:</b> ${tds[8].innerText}
+</div>
+<div class="divisor"></div>`;
+});
+
+container.innerHTML+=`
+<div style="text-align:center;margin-top:20px;font-size:12px;">
+Emitido em: ${dataHora}
+<br>
+Página ${p+1} de ${paginas}
+</div>`;
+
+if(p<paginas-1)
+container.innerHTML+="<div style='page-break-after:always'></div>";
 }
 
-carregarDados();
+html2pdf().from(container).save("Relatorio_Remanejo_Santa_Rosa_Malhas.pdf");
+}
 
 </script>
 </body>
